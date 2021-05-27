@@ -7,7 +7,7 @@ sed '/^$/d' breve_historia_1.5.txt > breve_historia_2.txt
 
 printf "Listando oraciones con la palabra 'Guerra':\n\n"
 
-grep -Eo "[A-Z]+([^\.]|[A-Z]\.)*(g|G)+(u|U)+(e|E)+(r|R){2}+(a|A)[^\.]*" breve_historia.txt | sed 's/^/- /'
+grep -Eo "[A-Z]+([^\.]|[A-Z]\.)*(g|G)+(u|U)+(e|E)+(r|R){2}+(a|A)([^\.]|[A-Z]\.)*" breve_historia.txt | sed 's/^/- /'
 
 #Punto e
 
@@ -32,16 +32,16 @@ grep -Eo "([^\. ]* ){0,5}peronismo([^\. ]* ){0,5}" breve_historia.txt | sed 's/^
 printf "\n===============================================================\n"
 printf "\nCuantas oraciones tienen 'Sarmiento' y 'Rosas': "
 
- grep -oP "[A-Z]([^\.]|[A-Z]\.)*((Sarmiento.*?Rosas)|(Rosas.*?Sarmiento?))[^\.]*\." breve_historia.txt | grep -c .
+ grep -oP "[A-Z]([^\.]|[A-Z]\.)*((Sarmiento([^\.]|[A-Z]\.)*?Rosas)|(Rosas([^\.]|[A-Z]\.)*?Sarmiento?))([^\.]|[A-Z]\.)*\." breve_historia.txt | grep -c .
 
- grep -oP "[A-Z]([^\.]|[A-Z]\.)*((Sarmiento.*?Rosas)|(Rosas.*?Sarmiento?))[^\.]*\." breve_historia.txt
+ grep -oP "[A-Z]([^\.]|[A-Z]\.)*((Sarmiento([^\.]|[A-Z]\.)*?Rosas)|(Rosas([^\.]|[A-Z]\.)*?Sarmiento?))([^\.]|[A-Z]\.)*\." breve_historia.txt
 
 #Punto h
 
 printf "\n===============================================================\n"
 printf "\nListando oraciones con fechas del siglo XIX:\n\n"
 
-grep -o -E "[A-Z]+([^\.]|[A-Z]\.)*+18[0-9]{2}+[^\.]*\." breve_historia.txt | sed 's/^/- /'
+grep -o -E "[A-Z]+([^\.]|[A-Z]\.)*+18[0-9]{2}+([^\.]|[A-Z]\.)*\." breve_historia.txt | sed 's/^/- /'
 
 
 #Punto i
@@ -51,7 +51,7 @@ grep -o -E "[A-Z]+([^\.]|[A-Z]\.)*+18[0-9]{2}+[^\.]*\." breve_historia.txt | sed
 #Punto j
 
 printf "\n===============================================================\n"
-printf "\nListando archivos de extensión .txt: "
+printf "\nListando archivos de extensión .txt:\n\n"
 
 ls | grep "[^\.]*\.txt"
 
