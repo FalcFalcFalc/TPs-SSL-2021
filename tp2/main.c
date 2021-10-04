@@ -45,26 +45,27 @@ void displayInput(){
 int main()
 {
     FILE *a = popen("wget -q - https://bolsar.info/lideres.php -O html.html", "r");
-    pclose(a); //me hubiera encantado poder usar el wget como pipeline, pero esta es la mejor solucion que encontré
+    pclose(a); // me hubiera encantado usar el pipeline para hacer el scrapping, pero esta es la mejor solución que encontré.
     FILE *f = fopen("html.html","rt");
     char *pchar;
     char buffer[2048];
     char especie[6];
 	int fila = 0;
 	int i;
-	bool tablaEncontrada = true;
+	bool tablaEncontrada = false;
 	
 	Cotizacion tabla[100];
+	
     if (f != NULL)
     {
         while (fgets(buffer,sizeof(buffer),f))
         {
-        	if(tablaEncontrada){
+        	if(!tablaEncontrada){
         		if(strstr(buffer, "<table ")){ 	//como en la pagina unicamente hay una tabla,
-        			tablaEncontrada = false;	//pregunto si en el buffer se encuentra la tabla
+        			tablaEncontrada = true;		//pregunto si en el buffer se encuentra la tabla
 				}								//eso nos adelanta mucho texto del html que no necesitamos
 			}									//incluso si el 'onclick' que buscamos no esta en el mismo buffer que '<table ', nos sirve igual porque estará en los siguientes
-			if ((pchar = strstr(buffer, "onclick=")) && !tablaEncontrada) //en caso de haberlo encontrado, nos ponemos a trabajar con el scrapping
+			if ((pchar = strstr(buffer, "onclick=")) && tablaEncontrada) //en caso de haberlo encontrado, nos ponemos a trabajar con el scrapping
             {
 				
                 /* ESPECIE */
@@ -234,7 +235,6 @@ int main()
 				
 				printf("\nMOSTRANDO ESPECIES CUYAS VARIACIONES SON NEGATIVAS\nN.| Nombre	| Variacion 	\n==================================================\n");
 				
-			    char prcnt = '%';
 			    for(i = 0; i<fila;i++){
 			
 					if(tabla[i].variacion < 0){
@@ -244,6 +244,7 @@ int main()
 			    		printf("| %s  	  %.2f%c %c\n", tabla[i].especie, tabla[i].variacion, '%', 25);
 					}
 				}
+				
 			    printf("==================================================\n\n");
 				
 				break;
@@ -275,20 +276,18 @@ int main()
 
 				html = fopen("reporteVariaciones.html","wt");
 				
-				fprintf(html,"<html><body><h1>Reporte de Variaciones</h1><table border=\"1px\">\n");
+				fprintf(html,"<html><head><title>Listado de Variaciones</title></head><body><h1>Reporte de Variaciones</h1><table border=\"1px\">\n");
 				
 				for(i = 0; i<fila;i++){
-			    	if(tabla[i].compra < tabla[i].apertura && tabla[i].venta < tabla[i].apertura){
-						fprintf(html,"<tr style=\"background-color:#336633; color:#00ff00;\">");
-			    	}
-			    	else{
-			    		fprintf(html,"<tr>");
+			    	if(tabla[i].variacion < 0){
+			    		if(tabla[i].compra < tabla[i].apertura && tabla[i].venta < tabla[i].apertura){
+							fprintf(html,"<tr style=\"background-color:#336633; color:#00ff00;\">");
+				    	}
+				    	else{
+				    		fprintf(html,"<tr>");
+						}
+						fprintf(html,"<td>%i</td><td>%s</td><td>%.2f%\%</td></tr>\n", i+1, tabla[i].especie, tabla[i].variacion);
 					}
-					fprintf(html,"<td>%i</td>",i+1);
-					fprintf(html,"<td>%s</td>", tabla[i].especie);
-					fprintf(html,"<td>%.2f%\%</td>", tabla[i].variacion);
-					
-					fprintf(html,"</tr>\n");
 				}
 				
 				fprintf(html,"</table></body></html>");
